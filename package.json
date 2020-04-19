@@ -1,0 +1,22 @@
+{
+  "name": "getting-started",
+  "version": "1.0.0",
+  "description": "google cloud function testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/bcollard/gcloud-functions-nodejs-claps.git"
+  },
+  "author": "Baptiste Collard",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bcollard/gcloud-functions-nodejs-claps/issues"
+  },
+  "homepage": "https://github.com/bcollard/gcloud-functions-nodejs-claps#readme",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^1.5.1"
+  }
+}
