@@ -3,7 +3,7 @@ FUNCTION=claps
 GCP_REGION=europe-west1
 GCP_PROJECT=personal-218506
 
-.PHONY: deploy call history run-local call-local
+.PHONY: deploy call-local-get-claps run-local call-get-claps notes
 .DEFAULT_GOAL := help
 
 help:
@@ -12,7 +12,7 @@ help:
 
 # LOCAL
 run-local: ## run the Google Cloud Function NodeJS Framework locally with the parameterized function
-	npx @google-cloud/functions-framework --target=${FUNCTION}
+	@npx @google-cloud/functions-framework --target=${FUNCTION}
 
 call-local-get-claps: ## call the function locally
 	@curl -X GET http://localhost:8080/
@@ -20,7 +20,7 @@ call-local-get-claps: ## call the function locally
 
 # REMOTE
 deploy: ## deploy the function to GCP
-	gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 6 --memory 128MB
+	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 6 --memory 128MB
 
 call-get-claps: ## call the function deployed on GCP
 	@curl -X GET https://${GCP_REGION}-${GCP_PROJECT}.cloudfunctions.net/${FUNCTION} -H "Authorization: bearer ${ID_TOKEN}"
@@ -28,14 +28,16 @@ call-get-claps: ## call the function deployed on GCP
 
 # NOTES
 define HIST
-gcloud auth login
+> gcloud auth login
 Google Cloud Functions + Firestore article: https://cloud.google.com/community/tutorials/cloud-functions-firestore
-Claps server API: 
-npm init
-npm install @google-cloud/functions-framework
-npm install @google-cloud/firestore
+Claps server API: https://github.com/ColinEberhardt/applause-button-server
+> npm init
+> npm install @google-cloud/functions-framework
+> npm install @google-cloud/firestore
 endef
 export HIST
 
 notes: ## print notes I took during the project setup
-	@echo "$$HIST"
+	@H=$$(echo "$$HIST" | sed -E 's/^> (.*)$$/\\033[90m\1\\033[0m/g') ;\
+	echo "$$H" ;\
+	
