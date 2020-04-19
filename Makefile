@@ -1,5 +1,7 @@
 ID_TOKEN=$(shell gcloud auth print-identity-token)
 FUNCTION=claps
+GCP_REGION=europe-west1
+GCP_PROJECT=personal-218506
 
 .PHONY: deploy call history run-local call-local
 
@@ -23,12 +25,12 @@ run-local:
 	npx @google-cloud/functions-framework --target=${FUNCTION}
 
 call-local-get-claps:
-	curl -X GET http://localhost:8080/
+	@curl -X GET http://localhost:8080/
 
 
 # REMOTE
 deploy:
-	gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region europe-west1 --runtime nodejs10 --trigger-http --timeout 6
+	gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region europe-west1 --runtime nodejs10 --trigger-http --timeout 6 --memory 128MB
 
 call-get-claps:
-	curl -X GET https://europe-west1-personal-218506.cloudfunctions.net/helloGET -H "Authorization: bearer ${ID_TOKEN}"
+	@curl -X GET https://${GCP_REGION}-${GCP_PROJECT}.cloudfunctions.net/${FUNCTION} -H "Authorization: bearer ${ID_TOKEN}"
