@@ -1,4 +1,4 @@
-exports.helloWorld = (req, res) => {
+exports.claps = (req, res) => {
     res.send('Hello, World');
 };
 
