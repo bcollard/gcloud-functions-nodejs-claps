@@ -2,8 +2,10 @@ ID_TOKEN=$(shell gcloud auth print-identity-token)
 FUNCTION=claps
 GCP_REGION=europe-west1
 GCP_PROJECT=personal-218506
+export FIRESTORE_ENV=local
+#export FIRESTORE_ENV=local
 
-.PHONY: deploy call-local-get-claps run-local call-get-claps notes
+.PHONY: deploy call-local-get-claps dev call-get-claps notes
 .DEFAULT_GOAL := help
 
 help:
@@ -11,7 +13,7 @@ help:
 
 
 # LOCAL
-run-local: ## run the Google Cloud Function NodeJS Framework locally with the parameterized function
+dev: ## run the Google Cloud Function NodeJS Framework locally with the parameterized function
 	@npx @google-cloud/functions-framework --target=${FUNCTION}
 
 call-local-get-claps: ## call the function locally
@@ -20,10 +22,10 @@ call-local-get-claps: ## call the function locally
 
 # REMOTE
 deploy: ## deploy the function to GCP
-	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 6 --memory 128MB
+	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB
 
 call-get-claps: ## call the function deployed on GCP
-	@curl -X GET https://${GCP_REGION}-${GCP_PROJECT}.cloudfunctions.net/${FUNCTION} -H "Authorization: bearer ${ID_TOKEN}"
+	@curl -X GET https://${GCP_REGION}-${GCP_PROJECT}.cloudfunctions.net/${FUNCTION} -H "Authorization: bearer ${ID_TOKEN}" -H "Referer: http://localhost:1313/posts/openldap-helm-chart/"
 
 
 # NOTES
@@ -34,6 +36,13 @@ Claps server API: https://github.com/ColinEberhardt/applause-button-server
 > npm init
 > npm install @google-cloud/functions-framework
 > npm install @google-cloud/firestore
+install firebase local emulator
+> npm install -g firebase-tools
+> firebase login
+set firebase location (europe west2) for my gcp / firebase project
+> firebase init
+> firebase use --add
+> firebase emulators:start --only firestore
 endef
 export HIST
 

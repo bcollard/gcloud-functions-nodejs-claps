@@ -1,0 +1,58 @@
+
+
+== workstation config
+[source, bash]
+----
+gcloud auth login
+----
+
+Google Cloud Functions + Firestore article: https://cloud.google.com/community/tutorials/cloud-functions-firestore
+Claps server API: https://github.com/ColinEberhardt/applause-button-server
+
+npm init
+npm install @google-cloud/functions-framework
+npm install @google-cloud/firestore
+
+
+
+== install firebase tools and init local project
+npm install -g firebase-tools
+firebase login
+set firebase location (europe west2) for my gcp / firebase project
+firebase init
+firebase use --add
+
+
+== use local emulators
+firebase emulators:start --only firestore
+export FIRESTORE_EMULATOR_HOST=localhost:8081
+
+
+== remote export firestore
+gcloud firestore export --collection-ids='claps' gs://firestore-dump-personal-218506
+gsutil cp -r gs://firestore-dump-personal-218506 .
+java -jar /Users/bapt/.cache/firebase/emulators/cloud-firestore-emulator-v1.11.3.jar --seed_from_export=firestore-dump-personal-218506/
+
+
+== remote import firestore
+https://firebase.google.com/docs/firestore/manage-data/export-import#import_data
+
+
+== local export firestore
+export FIRESTORE_EMULATOR_HOST=localhost:8081
+firebase emulators:export --only firestore --force local-export-forced
+
+curl "localhost:8081/emulator/v1/projects/personal-218506:export" \
+  -d '{"database": "projects/personal-218506/databases/(default)","export_directory":"."}' \
+  -H "Content-Type: application/json"
+
+
+== local import firestore
+firebase emulators:start --only firestore --import=...
+
+curl -X POST localhost:8081/v1/projects/personal-218506:import \
+-H 'Content-Type: application/json' \
+-d '{"input_url":"./test-resources/2020-04-21T08_42_16_78280_all_namespaces_kind_claps_output-0"}'
+
+
+
