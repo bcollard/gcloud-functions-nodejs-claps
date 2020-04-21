@@ -1,13 +1,11 @@
 'use strict';
 
-const FIRESTORE_ENV = process.env.FIRESTORE_ENV
-
 const Firestore = require('@google-cloud/firestore');
+
+const FIRESTORE_ENV = process.env.FIRESTORE_ENV
 
 const PROJECT_ID = 'personal-218506';
 const COLLECTION_NAME = 'claps';
-
-
 
 var firestore = new Firestore({
     projectId: PROJECT_ID,
@@ -16,18 +14,11 @@ var firestore = new Firestore({
 
 if (FIRESTORE_ENV === "local") {
     firestore.settings({
-        host: "localhost:8081",
         ssl: false
     });
 }
 
 
-
-
-/**
-* @param {!express:Request} HTTP request
-* @param {!express:Response} HTTP response
-*/
 exports.claps = (req, res) => {
 
     res.set('Access-Control-Allow-Origin', '*');
@@ -43,7 +34,7 @@ exports.claps = (req, res) => {
 
         case 'POST': {
             const data = (req.body) || {};
-            express.response.send("received:" + data)
+            res.send("received:" + data)
             break;
         }
 

@@ -5,7 +5,7 @@ GCP_PROJECT=personal-218506
 export FIRESTORE_ENV=local
 #export FIRESTORE_ENV=local
 
-.PHONY: deploy call-local-get-claps dev call-get-claps notes
+.PHONY: deploy call-local-get-claps dev call-get-claps notes local-firestore
 .DEFAULT_GOAL := help
 
 help:
@@ -17,7 +17,11 @@ dev: ## run the Google Cloud Function NodeJS Framework locally with the paramete
 	@npx @google-cloud/functions-framework --target=${FUNCTION}
 
 call-local-get-claps: ## call the function locally
-	@curl -X GET http://localhost:8080/
+	@curl -X GET http://localhost:8080/ -H "Referer: http://localhost:1313/posts/openldap-helm-chart/"
+
+local-firestore: ## run a local firestore
+	export FIRESTORE_EMULATOR_HOST=localhost:8081
+	firebase emulators:start --only firestore --import firestore-dump-personal-218506/2020-04-21T08:42:16_78280
 
 
 # REMOTE

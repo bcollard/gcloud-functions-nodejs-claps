@@ -18,7 +18,10 @@
   "homepage": "https://github.com/bcollard/gcloud-functions-nodejs-claps#readme",
   "dependencies": {
     "@google-cloud/firestore": "3.7.4",
-    "@google-cloud/functions-framework": "^1.5.1",
+    "@google-cloud/functions-framework": "^1.5.1"
+  },
+  "devDependencies": {
+    "express": "^4.17.1",
     "firebase-tools": "^8.1.1"
   }
 }

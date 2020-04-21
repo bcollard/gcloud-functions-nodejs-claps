@@ -1,4 +1,4 @@
-
+= Project scaffolding
 
 == workstation config
 [source, bash]
@@ -6,13 +6,19 @@
 gcloud auth login
 ----
 
-Google Cloud Functions + Firestore article: https://cloud.google.com/community/tutorials/cloud-functions-firestore
+== legacy claps API
 Claps server API: https://github.com/ColinEberhardt/applause-button-server
 
+
+== Tuto
+Google Cloud Functions + Firestore article: https://cloud.google.com/community/tutorials/cloud-functions-firestore 
+  --> https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-functions-firestore/index.js
+
+
+== project setup
 npm init
 npm install @google-cloud/functions-framework
 npm install @google-cloud/firestore
-
 
 
 == install firebase tools and init local project
@@ -48,11 +54,18 @@ curl "localhost:8081/emulator/v1/projects/personal-218506:export" \
 
 
 == local import firestore
-firebase emulators:start --only firestore --import=...
+Trigger a local export first. Copy the .json file to the real export directory created via gsutil cp... and edit the JSON to point to the metadata file of the export folder:
+{"version":"8.1.1","firestore":{"version":"1.11.3","path":"firestore_export","metadata_file":"2020-04-21T08:42:16_78280.overall_export_metadata"}}
 
-curl -X POST localhost:8081/v1/projects/personal-218506:import \
--H 'Content-Type: application/json' \
--d '{"input_url":"./test-resources/2020-04-21T08_42_16_78280_all_namespaces_kind_claps_output-0"}'
+firebase emulators:start --only firestore --import firestore-dump-personal-218506/2020-04-21T08:42:16_78280
 
 
+== deployment commands
+gcloud functions deploy helloGET --entry-point helloWorld --region europe-west1 --runtime nodejs10 --trigger-http
+
+https://cloud.google.com/functions/docs/quickstart#functions-deploy-command-nodejs
+
+
+== auth function to firestore
+https://cloud.google.com/functions/docs/securing/authenticating#gcloud
 
