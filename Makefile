@@ -14,13 +14,13 @@ help:
 
 # LOCAL
 dev: ## run the Google Cloud Function NodeJS Framework locally with the parameterized function
+	export FIRESTORE_EMULATOR_HOST=localhost:8081
 	@npx @google-cloud/functions-framework --target=${FUNCTION}
 
 call-local-get-claps: ## call the function locally
 	@curl -X GET http://localhost:8080/ -H "Referer: http://localhost:1313/posts/openldap-helm-chart/"
 
 local-firestore: ## run a local firestore
-	export FIRESTORE_EMULATOR_HOST=localhost:8081
 	firebase emulators:start --only firestore --import firestore-dump-personal-218506/2020-04-21T08:42:16_78280
 
 
@@ -34,19 +34,10 @@ call-get-claps: ## call the function deployed on GCP
 
 # NOTES
 define HIST
-> gcloud auth login
-Google Cloud Functions + Firestore article: https://cloud.google.com/community/tutorials/cloud-functions-firestore
-Claps server API: https://github.com/ColinEberhardt/applause-button-server
-> npm init
-> npm install @google-cloud/functions-framework
-> npm install @google-cloud/firestore
-install firebase local emulator
-> npm install -g firebase-tools
-> firebase login
-set firebase location (europe west2) for my gcp / firebase project
-> firebase init
-> firebase use --add
-> firebase emulators:start --only firestore
+List available actions with:
+> make help
+
+There are two groups of actions: LOCAL and REMOTE, see the Makefile comments.
 endef
 export HIST
 

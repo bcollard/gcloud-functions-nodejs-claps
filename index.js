@@ -1,13 +1,16 @@
 'use strict';
 
+const functions = require('firebase-functions');
 const Firestore = require('@google-cloud/firestore');
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
 const FIRESTORE_ENV = process.env.FIRESTORE_ENV
-
 const PROJECT_ID = 'personal-218506';
 const COLLECTION_NAME = 'claps';
 
-var firestore = new Firestore({
+let firestore = new Firestore({
     projectId: PROJECT_ID,
     timestampsInSnapshots: true
 });
@@ -19,52 +22,68 @@ if (FIRESTORE_ENV === "local") {
 }
 
 
-exports.claps = (req, res) => {
+app.use(cors({ origin: true }));
 
-    res.set('Access-Control-Allow-Origin', '*');
+app.get('/', (req, res) => {
+    let referer = req.get("Referer");
 
-    switch (req.method) {
-        case 'OPTIONS': { // CORS
-            res.set('Access-Control-Allow-Methods', 'GET');
-            res.set('Access-Control-Allow-Headers', 'Content-Type');
-            res.set('Access-Control-Max-Age', '3600');
-            res.status(204).send('');
-            break;
-        }
+    let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer).limit(1);
 
-        case 'POST': {
-            const data = (req.body) || {};
-            res.send("received:" + data)
-            break;
-        }
+    return query
+        .get()
+        .then(querySnapshot => {
+            if (querySnapshot.empty) {
+                console.error('No matching documents for referer: ' + referer);
+                return res.send(404);
+            }
 
-        case 'GET': {
-            let referer = req.get("Referer");
-            
-            let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer);
+            return querySnapshot.forEach(documentSnapshot => {
+                let count = documentSnapshot.get('claps');
+                return res.status(200).send(String(count));
 
-            return query
-                .get()
-                .then(querySnapshot => {
-                    if (querySnapshot.empty) {
-                        console.error('No matching documents for referer: ' + referer);
-                        return res.send(404);
-                    }
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+});
 
-                    return querySnapshot.forEach(documentSnapshot => {
-                        let count = documentSnapshot.get('claps');
-                        res.status(200).send(String(count));
+app.post('/', (req, res) => {
+    let referer = req.get("Referer");
 
+    let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer).limit(1);
+
+    return query
+        .get()
+        .then(querySnapshot => {
+            if (querySnapshot.empty) {
+                // add
+                firestore.collection(COLLECTION_NAME).add({'url': referer, 'claps': 1})
+                    .then(docRef => {
+                        return res.status(201).send("1");
                     })
-                })
-                .catch(err => {
-                    console.log(err);
+                    .catch(err => {
+                        console.error("something went wrong while adding an entry for referer: " + referer, err);
+                    });
+            } else {
+                // update
+                querySnapshot.forEach(documentSnapshot => {
+                    let currentCount = documentSnapshot.get('claps');
+                    documentSnapshot.ref.set({'claps': ++currentCount}, {merge: true})
+                        .then(() => {
+                            return res.status(200).send(String(currentCount));
+                        })
+                        .catch(err => {
+                            console.error("something went wrong while updating count for referer, currentCount; " + referer + ", " + currentCount, err);
+                        });    
                 });
-        }
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            return res.send(500);
+        });
 
-        default:
-            res.send(403);
-            break;
-    }
+});
 
-};
+exports.claps = functions.https.onRequest(app);
