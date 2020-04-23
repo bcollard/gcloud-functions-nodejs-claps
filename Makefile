@@ -19,6 +19,7 @@ dev: ## run the Google Cloud Function NodeJS Framework locally with the paramete
 
 call-local-get-claps: ## call the function locally
 	@curl -X GET http://localhost:8080/ -H "Referer: http://localhost:1313/posts/openldap-helm-chart/"
+	#curl -X GET http://localhost:8080/ -H "Referer: https://www.baptistout.net/posts/o?penldap-helm-chart/"
 
 local-firestore: ## run a local firestore
 	firebase emulators:start --only firestore --import firestore-dump-personal-218506/2020-04-21T08:42:16_78280
@@ -41,7 +42,7 @@ There are two groups of actions: LOCAL and REMOTE, see the Makefile comments.
 endef
 export HIST
 
-notes: ## print notes I took during the project setup
+notes: ## print various information
 	@H=$$(echo "$$HIST" | sed -E 's/^> (.*)$$/\\033[90m\1\\033[0m/g') ;\
 	echo "$$H" ;\
-	
+
