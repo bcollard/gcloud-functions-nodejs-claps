@@ -2,6 +2,7 @@ ID_TOKEN=$(shell gcloud auth print-identity-token)
 FUNCTION=claps
 GCP_REGION=europe-west1
 export PROJECT_ID=personal-218506
+export FIRESTORE_ENV=local
 
 
 .PHONY: deploy call-local-get-claps dev call-get-claps notes local-firestore
@@ -14,7 +15,6 @@ help:
 # LOCAL
 dev: ## run the Google Cloud Function NodeJS Framework locally with the parameterized function
 	export FIRESTORE_EMULATOR_HOST=localhost:8081
-	export FIRESTORE_ENV=local
 	@npx @google-cloud/functions-framework --target=${FUNCTION}
 
 call-local-get-claps: ## call the function locally
