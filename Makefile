@@ -27,10 +27,10 @@ local-firestore: ## run a local firestore
 
 # REMOTE
 deploy: ## deploy the function to GCP
-	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB
+	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB --allow-unauthenticated
 
 call-get-claps: ## call the function deployed on GCP
-	@curl -X GET https://${GCP_REGION}-${GCP_PROJECT}.cloudfunctions.net/${FUNCTION} -H "Authorization: bearer ${ID_TOKEN}" -H "Referer: http://localhost:1313/posts/openldap-helm-chart/"
+	@curl -X GET https://${GCP_REGION}-${GCP_PROJECT}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/"
 
 
 # NOTES

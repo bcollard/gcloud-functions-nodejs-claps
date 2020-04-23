@@ -14,3 +14,12 @@
 .gitignore
 
 node_modules
+test-resources
+.firebaserc
+
+fire*
+
+Makefile
+
+NOTES.adoc
+
