@@ -13,8 +13,10 @@ Claps server API: https://github.com/ColinEberhardt/applause-button-server
 == Tuto
 Google Cloud Functions + Firestore article: https://cloud.google.com/community/tutorials/cloud-functions-firestore 
   --> https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-functions-firestore/index.js
-  
-https://medium.com/better-programming/building-an-api-with-firebase-109041721f77
+
+API: https://medium.com/better-programming/building-an-api-with-firebase-109041721f77
+
+Rate-limiting: https://cloud.google.com/community/tutorials/cloud-functions-rate-limiting
 
 
 == project setup
