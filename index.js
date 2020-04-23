@@ -7,8 +7,8 @@ const cors = require('cors');
 const app = express();
 const isAbsUrl = require('is-absolute-url');
 
-const FIRESTORE_ENV = process.env.FIRESTORE_ENV
-const PROJECT_ID = 'personal-218506';
+const FIRESTORE_ENV = process.env.FIRESTORE_ENV;
+const PROJECT_ID = process.env.PROJECT_ID;
 const COLLECTION_NAME = 'claps';
 
 let firestore = new Firestore({
@@ -23,8 +23,21 @@ if (FIRESTORE_ENV === "local") {
 }
 
 
-app.use(cors({ origin: true }));
+// CORS
+var corsWhitelist = ['http://localhost:1313', 'https://www.baptistout.net']
+var corsOptions = {
+    origin: function (origin, callback) {
+        if (corsWhitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
+}
+app.use(cors(corsOptions));
 
+
+// GET
 app.get('/', (req, res) => {
     let referer = req.get("Referer");
     if ( ! checkUrl(referer)) { return res.sendStatus(403) };
@@ -51,6 +64,7 @@ app.get('/', (req, res) => {
         });
 });
 
+// POST
 app.post('/', (req, res) => {
     let referer = req.get("Referer");
     if ( ! checkUrl(referer)) { return res.sendStatus(403) };

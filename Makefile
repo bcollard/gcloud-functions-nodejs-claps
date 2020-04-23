@@ -1,7 +1,7 @@
 ID_TOKEN=$(shell gcloud auth print-identity-token)
 FUNCTION=claps
 GCP_REGION=europe-west1
-GCP_PROJECT=personal-218506
+export PROJECT_ID=personal-218506
 export FIRESTORE_ENV=local
 #export FIRESTORE_ENV=local
 
@@ -30,7 +30,7 @@ deploy: ## deploy the function to GCP
 	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB --allow-unauthenticated
 
 call-get-claps: ## call the function deployed on GCP
-	@curl -X GET https://${GCP_REGION}-${GCP_PROJECT}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/"
+	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/"
 
 
 # NOTES

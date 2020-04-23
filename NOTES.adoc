@@ -83,3 +83,7 @@ https://cloud.google.com/functions/docs/quickstart#functions-deploy-command-node
 == auth function to firestore
 https://cloud.google.com/functions/docs/securing/authenticating#gcloud
 
+
+
+== Functions Quotas
+https://cloud.google.com/functions/quotas
