@@ -2,8 +2,7 @@ ID_TOKEN=$(shell gcloud auth print-identity-token)
 FUNCTION=claps
 GCP_REGION=europe-west1
 export PROJECT_ID=personal-218506
-export FIRESTORE_ENV=local
-#export FIRESTORE_ENV=local
+
 
 .PHONY: deploy call-local-get-claps dev call-get-claps notes local-firestore
 .DEFAULT_GOAL := help
@@ -15,6 +14,7 @@ help:
 # LOCAL
 dev: ## run the Google Cloud Function NodeJS Framework locally with the parameterized function
 	export FIRESTORE_EMULATOR_HOST=localhost:8081
+	export FIRESTORE_ENV=local
 	@npx @google-cloud/functions-framework --target=${FUNCTION}
 
 call-local-get-claps: ## call the function locally
@@ -27,7 +27,7 @@ local-firestore: ## run a local firestore
 
 # REMOTE
 deploy: ## deploy the function to GCP
-	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB --allow-unauthenticated
+	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB --allow-unauthenticated --set-env-vars PROJECT_ID=${PROJECT_ID}
 
 call-get-claps: ## call the function deployed on GCP
 	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/"
