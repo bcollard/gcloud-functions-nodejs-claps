@@ -59,15 +59,20 @@ app.use((req, res, next) => {
 
 // manual request limiting
 app.get('/', (req, res, next) => {
-    var currentCount = IP_COUNT_GET_MAP[req.ip];
+    let IP = req.ip;
+    if (FIRESTORE_ENV == undefined) {
+        IP = req.headers['x-forwarded-for']
+    } 
+    
+    var currentCount = IP_COUNT_GET_MAP[IP];
     if (currentCount && typeof(currentCount) === "number" && currentCount > MAX_GET_PER_IP) {
-        console.info("Reached request limit for IP: " + req.ip + ", method GET, count: " + currentCount + ", Referer: " + req.get("Referer"));
+        console.info("Reached request limit for IP: " + IP + ", method GET, count: " + currentCount + ", Referer: " + req.get("Referer"));
         return res.sendStatus(429);
     } else {
         if (currentCount == undefined) {
-            IP_COUNT_GET_MAP[req.ip] = new Number(1);
+            IP_COUNT_GET_MAP[IP] = new Number(1);
         } else {
-            IP_COUNT_GET_MAP[req.ip] = ++currentCount;
+            IP_COUNT_GET_MAP[IP] = ++currentCount;
         }
     }
     // randomly log the IP table, around 10% of calls
@@ -75,18 +80,25 @@ app.get('/', (req, res, next) => {
         console.log("HTTP GET - IP MAP:");
         console.table(IP_COUNT_GET_MAP);
     }
+
     next();
 });
+
 app.post('/', (req, res, next) => {
-    var currentCount = IP_COUNT_POST_MAP[req.ip];
+    let IP = req.ip;
+    if (FIRESTORE_ENV == undefined) {
+        IP = req.headers['x-forwarded-for']
+    }
+
+    var currentCount = IP_COUNT_POST_MAP[IP];
     if (currentCount && typeof(currentCount) === "number" && currentCount > MAX_POST_PER_IP) {
-        console.info("Reached request limit for IP: " + req.ip + ", method POST, count: " + currentCount + ", Referer: " + req.get("Referer"));
+        console.info("Reached request limit for IP: " + IP + ", method POST, count: " + currentCount + ", Referer: " + req.get("Referer"));
         return res.sendStatus(429);
     } else {
         if (currentCount == undefined) {
-            IP_COUNT_POST_MAP[req.ip] = new Number(1);
+            IP_COUNT_POST_MAP[IP] = new Number(1);
         } else {
-            IP_COUNT_POST_MAP[req.ip] = ++currentCount;
+            IP_COUNT_POST_MAP[IP] = ++currentCount;
         }
     }
     // randomly log the IP table, around 10% of calls
@@ -94,6 +106,7 @@ app.post('/', (req, res, next) => {
         console.log("HTTP POST - IP MAP:");
         console.table(IP_COUNT_POST_MAP);
     }
+    
     next();
 });
 
