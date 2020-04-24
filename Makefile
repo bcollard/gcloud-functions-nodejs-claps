@@ -19,6 +19,7 @@ dev: ## run the Google Cloud Function NodeJS Framework locally with the paramete
 
 call-local-get-claps: ## call the function locally
 	@curl -X GET http://localhost:8080/ -H "Referer: http://localhost:1313/posts/openldap-helm-chart/"
+	#curl -X GET http://localhost:8080/ -H "Referer: http://localhosdt:1313/posts/openldap-helm-chart/"
 	#curl -X GET http://localhost:8080/ -H "Referer: https://www.baptistout.net/posts/o?penldap-helm-chart/"
 
 local-firestore: ## run a local firestore

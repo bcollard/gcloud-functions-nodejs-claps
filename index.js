@@ -30,18 +30,24 @@ var corsOptions = {
         if (corsWhitelist.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
-            callback(new Error('Not allowed by CORS'))
+            callback(null, false)
         }
     }
 }
 app.use(cors(corsOptions));
 
 
+// Referrer validation
+app.use((req, res, next) => {
+    let referer = req.get("Referer");
+    if ( ! checkUrl(referer)) { return res.sendStatus(403) };
+    next();
+});
+
+
 // GET
 app.get('/', (req, res) => {
     let referer = req.get("Referer");
-    if ( ! checkUrl(referer)) { return res.sendStatus(403) };
-
     let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer).limit(1);
 
     return query
@@ -64,11 +70,10 @@ app.get('/', (req, res) => {
         });
 });
 
+
 // POST
 app.post('/', (req, res) => {
     let referer = req.get("Referer");
-    if ( ! checkUrl(referer)) { return res.sendStatus(403) };
-
     let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer).limit(1);
 
     return query
