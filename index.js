@@ -57,7 +57,7 @@ app.use((req, res, next) => {
 });
 
 
-// manual request limiting
+// manual request limiting - GET
 app.get('/', (req, res, next) => {
     let IP = req.ip;
     if (FIRESTORE_ENV == undefined) {
@@ -83,7 +83,7 @@ app.get('/', (req, res, next) => {
 
     next();
 });
-
+// manual request limiting - POST
 app.post('/', (req, res, next) => {
     let IP = req.ip;
     if (FIRESTORE_ENV == undefined) {
@@ -106,7 +106,7 @@ app.post('/', (req, res, next) => {
         console.log("HTTP POST - IP MAP:");
         console.table(IP_COUNT_POST_MAP);
     }
-    
+
     next();
 });
 
