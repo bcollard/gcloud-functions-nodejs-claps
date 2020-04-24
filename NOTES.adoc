@@ -8,6 +8,7 @@ gcloud auth login
 
 == legacy claps API
 Claps server API: https://github.com/ColinEberhardt/applause-button-server
+Claps HTML element and script: https://codepen.io/itaditya/pen/yPGqqP
 
 
 == Tuto

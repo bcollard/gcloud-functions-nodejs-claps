@@ -11,6 +11,11 @@ const FIRESTORE_ENV = process.env.FIRESTORE_ENV;
 const PROJECT_ID = process.env.PROJECT_ID;
 const COLLECTION_NAME = 'claps';
 
+const IP_COUNT_GET_MAP = [];
+const IP_COUNT_POST_MAP = [];
+const MAX_GET_PER_IP = 1000;
+const MAX_POST_PER_IP = 100;
+
 let firestore = new Firestore({
     projectId: PROJECT_ID,
     timestampsInSnapshots: true
@@ -21,6 +26,13 @@ if (FIRESTORE_ENV === "local") {
         ssl: false
     });
 }
+
+
+// Accept only POST or GET
+app.use((req, res, next) => {
+    if (req.method != "POST" && req.method != "GET") return res.sendStatus(405);
+    next();
+});
 
 
 // CORS
@@ -41,6 +53,47 @@ app.use(cors(corsOptions));
 app.use((req, res, next) => {
     let referer = req.get("Referer");
     if ( ! checkUrl(referer)) { return res.sendStatus(403) };
+    next();
+});
+
+
+// manual request limiting
+app.get('/', (req, res, next) => {
+    var currentCount = IP_COUNT_GET_MAP[req.ip];
+    if (currentCount && typeof(currentCount) === "number" && currentCount > MAX_GET_PER_IP) {
+        console.info("Reached request limit for IP: " + req.ip + ", method GET, count: " + currentCount + ", Referer: " + req.get("Referer"));
+        return res.sendStatus(429);
+    } else {
+        if (currentCount == undefined) {
+            IP_COUNT_GET_MAP[req.ip] = new Number(1);
+        } else {
+            IP_COUNT_GET_MAP[req.ip] = ++currentCount;
+        }
+    }
+    // randomly log the IP table, around 10% of calls
+    if (Math.floor(Math.random() *10) == 5) {
+        console.log("HTTP GET - IP MAP:");
+        console.table(IP_COUNT_GET_MAP);
+    }
+    next();
+});
+app.post('/', (req, res, next) => {
+    var currentCount = IP_COUNT_POST_MAP[req.ip];
+    if (currentCount && typeof(currentCount) === "number" && currentCount > MAX_POST_PER_IP) {
+        console.info("Reached request limit for IP: " + req.ip + ", method POST, count: " + currentCount + ", Referer: " + req.get("Referer"));
+        return res.sendStatus(429);
+    } else {
+        if (currentCount == undefined) {
+            IP_COUNT_POST_MAP[req.ip] = new Number(1);
+        } else {
+            IP_COUNT_POST_MAP[req.ip] = ++currentCount;
+        }
+    }
+    // randomly log the IP table, around 10% of calls
+    if (Math.floor(Math.random() *10) == 5) {
+        console.log("HTTP POST - IP MAP:");
+        console.table(IP_COUNT_POST_MAP);
+    }
     next();
 });
 
