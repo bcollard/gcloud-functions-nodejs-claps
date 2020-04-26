@@ -17,7 +17,7 @@ var REDIS_HOST = "localhost"
 const IP_COUNT_GET_MAP = [];
 const IP_COUNT_POST_MAP = [];
 const MAX_GET_PER_IP = 1000;
-const MAX_POST_PER_IP = 100;
+const MAX_POST_PER_IP = 200;
 
 let firestore = new Firestore({
     projectId: PROJECT_ID,
