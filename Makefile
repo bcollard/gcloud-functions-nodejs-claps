@@ -25,10 +25,16 @@ call-local-get-claps: ## call the function locally
 local-firestore: ## run a local firestore
 	firebase emulators:start --only firestore --import firestore-dump-personal-218506/2020-04-21T08:42:16_78280
 
+start-local-redis: ## run a local redis store
+	docker run -d -p 6379:6379 --name redis-rate-limiter redis
+
+stop-local-redis:
+	docker stop redis-rate-limiter
+
 
 # REMOTE
 deploy: ## deploy the function to GCP
-	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB --allow-unauthenticated --set-env-vars PROJECT_ID=${PROJECT_ID}
+	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB --allow-unauthenticated --set-env-vars PROJECT_ID=${PROJECT_ID} --set-env-vars REDIS_HOST=10.29.74.131 --vpc-connector projects/personal-218506/locations/europe-west1/connectors/bco-serverless-connector
 
 call-get-claps: ## call the function deployed on GCP
 	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/"
