@@ -37,7 +37,8 @@ deploy: ## deploy the function to GCP
 	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB --allow-unauthenticated --set-env-vars PROJECT_ID=${PROJECT_ID} --set-env-vars REDIS_HOST=10.29.74.131 --vpc-connector projects/personal-218506/locations/europe-west1/connectors/bco-serverless-connector
 
 call-get-claps: ## call the function deployed on GCP
-	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/"
+	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/" -H "Origin: https://www.baptistout.net"
+	# ?secretme=true
 
 
 # NOTES

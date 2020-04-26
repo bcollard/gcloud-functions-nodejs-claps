@@ -68,7 +68,10 @@ app.use((req, res, next) => {
 // REDIS rate-limiting
 var redisMiddleware = rateLimiter.middleware({
     redis: redisClient,
-    key: 'ip',
+    //key: 'ip',
+    key: function (req) {
+        return req.headers['x-forwarded-for']
+    },
     rate: '10/second'
 });
 app.use(redisMiddleware);
@@ -132,6 +135,13 @@ app.post('/', (req, res, next) => {
 app.get('/', (req, res) => {
     let referer = req.get("Referer");
     let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer).limit(1);
+
+    if (req.query.secretme) {
+        console.log("HTTP GET - IP MAP:");
+        console.table(IP_COUNT_GET_MAP);
+        console.log("HTTP POST - IP MAP:");
+        console.table(IP_COUNT_POST_MAP);
+    }
 
     return query
         .get()
@@ -207,5 +217,6 @@ function checkUrl(url) {
 
     return result;
 }
+
 
 exports.claps = functions.https.onRequest(app);
