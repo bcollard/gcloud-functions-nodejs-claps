@@ -92,7 +92,10 @@ app.use(cors(corsOptions));
 // Referrer validation
 app.use((req, res, next) => {
     let referrer = req.get("Referer");
-    if (referrer !== undefined && !validReferrer(referrer)) { return res.sendStatus(403) };
+    if (referrer !== undefined && !validReferrer(referrer)) { 
+        console.warn("forbidding referrer: " + referrer);
+        return res.sendStatus(403);
+    };
     next();
 });
 

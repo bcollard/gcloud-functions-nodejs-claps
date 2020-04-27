@@ -46,7 +46,6 @@ export FIRESTORE_EMULATOR_HOST=localhost:8081
 ```bash
 gcloud firestore export --collection-ids='claps' gs://firestore-dump-personal-218506
 gsutil cp -r gs://firestore-dump-personal-218506 .
-java -jar /Users/bapt/.cache/firebase/emulators/cloud-firestore-emulator-v1.11.3.jar --seed_from_export=firestore-dump-personal-218506/
 ```
 
 
@@ -89,7 +88,4 @@ https://cloud.google.com/functions/docs/securing/authenticating#gcloud
 == Functions Quotas
 https://cloud.google.com/functions/quotas
 
-
-== serverless VPC
-gcloud services enable vpcaccess.googleapis.com
 
