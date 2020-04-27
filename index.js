@@ -136,7 +136,7 @@ app.get('/', (req, res) => {
     let referer = req.get("Referer");
     let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer).limit(1);
 
-    if (req.query.secretme) {
+    if (req.query.logstats) {
         console.log("HTTP GET - IP MAP:");
         console.table(IP_COUNT_GET_MAP);
         console.log("HTTP POST - IP MAP:");
@@ -205,7 +205,7 @@ app.post('/', (req, res) => {
 });
 
 function checkUrl(url) {
-    if (!isAbsUrl(url)) return false;
+    if (url == undefined || !isAbsUrl(url)) return false;
 
     let result = false;
     let whitelist = [/^https:\/\/www.baptistout.net\/posts\/[\w\d-]+\/?$/g];
