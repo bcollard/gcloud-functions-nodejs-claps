@@ -3,6 +3,7 @@ FUNCTION=claps
 GCP_REGION=europe-west1
 export PROJECT_ID=personal-218506
 export FIRESTORE_ENV=local
+export SUPER_USER_MAIL_ADDRESS=baptiste.collard@gmail.com
 
 
 .PHONY: deploy call-local-get-claps dev call-get-claps notes local-firestore
@@ -38,11 +39,23 @@ rm-local-redis: ## rm the local redis (docker)
 
 # REMOTE
 deploy: ## deploy the function to GCP
-	@gcloud functions deploy ${FUNCTION} --entry-point ${FUNCTION} --region ${GCP_REGION} --runtime nodejs10 --trigger-http --timeout 10 --memory 128MB --allow-unauthenticated --set-env-vars PROJECT_ID=${PROJECT_ID} --set-env-vars REDIS_HOST=10.29.74.131 --vpc-connector projects/personal-218506/locations/europe-west1/connectors/bco-serverless-connector
+	@gcloud functions deploy ${FUNCTION} \
+		--entry-point ${FUNCTION} \
+		--region ${GCP_REGION} \
+		--runtime nodejs10 \
+		--trigger-http \
+		--timeout 10 \
+		--memory 256MB \
+		--allow-unauthenticated \
+		--set-env-vars PROJECT_ID=${PROJECT_ID} \
+		--set-env-vars REDIS_HOST=10.29.74.131 \
+		--vpc-connector projects/${PROJECT_ID}/locations/europe-west1/connectors/bco-serverless-connector \
+		--set-env-vars OAUTH_REDIRECT_URI=https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION}/secure/oauthcallback \
+		--set-env-vars SUPER_USER_MAIL_ADDRESS=${SUPER_USER_MAIL_ADDRESS}
 
 call-get-claps: ## call the function deployed on GCP
 	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/" -H "Origin: https://www.baptistout.net"
-	# ?logstats=true
+
 
 
 # NOTES

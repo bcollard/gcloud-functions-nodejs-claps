@@ -88,3 +88,8 @@ https://cloud.google.com/functions/docs/securing/authenticating#gcloud
 
 == Functions Quotas
 https://cloud.google.com/functions/quotas
+
+
+== serverless VPC
+gcloud services enable vpcaccess.googleapis.com
+
