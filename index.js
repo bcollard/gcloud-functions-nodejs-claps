@@ -284,7 +284,7 @@ app.get('/secure/oauthcallback', (req, res) => {
                 });
             } catch (err) {
                 console.error("error verifying the ID token: " + err);
-                return res.sendStatus(500);
+                return res.sendStatus(403);
             }
         })
         .catch((err) => {
