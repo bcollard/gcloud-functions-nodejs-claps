@@ -30,7 +30,7 @@ const firestore = new Firestore({
 
 var REDIS_HOST = "localhost"
 var OAUTH_REDIRECT_URI = "http://localhost:8080/secure/oauthcallback"
-let REFERRER_WHITELIST = [/^https:\/\/www.baptistout.net\/posts\/[\w\d-]+\/?$/g];
+let REFERRER_WHITELIST = [/^https:\/\/www.baptistout.net\/posts\/[\w\d-]+\/?#?[\w\d-_\?&=]*$/g];
 var CORS_WHITELIST = ['https://www.baptistout.net']
 
 // ENV SETTINGS
@@ -41,7 +41,7 @@ if (FIRESTORE_ENV === "local") {
         port: 8081
     });
     CORS_WHITELIST.push('http://localhost:1313');
-    REFERRER_WHITELIST.push(/^http:\/\/localhost:1313\/posts\/[\w\d-]+\/?$/g);
+    REFERRER_WHITELIST.push(/^http:\/\/localhost:1313\/posts\/[\w\d-]+\/?#?[\w\d-_\?&=]*$/g);
 } else {
     REDIS_HOST = process.env.REDIS_HOST
     OAUTH_REDIRECT_URI = process.env.OAUTH_REDIRECT_URI;
