@@ -67,7 +67,7 @@ function getKey(header, callback) {
 }
 
 // Redis config
-var redisClient = redis.createClient(6379, REDIS_HOST, { enable_offline_queue: false });
+//var redisClient = redis.createClient(6379, REDIS_HOST, { enable_offline_queue: false });
 
 
 // Accept only POST or GET
@@ -102,15 +102,15 @@ app.use((req, res, next) => {
 
 
 // REDIS rate-limiting
-var redisMiddleware = rateLimiter.middleware({
-    redis: redisClient,
-    //key: 'ip',
-    key: function (req) {
-        return req.headers['x-forwarded-for']
-    },
-    rate: '10/second'
-});
-app.use(redisMiddleware);
+// var redisMiddleware = rateLimiter.middleware({
+//     redis: redisClient,
+//     //key: 'ip',
+//     key: function (req) {
+//         return req.headers['x-forwarded-for']
+//     },
+//     rate: '10/second'
+// });
+// app.use(redisMiddleware);
 
 
 // manual request limiting - GET
