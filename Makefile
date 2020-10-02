@@ -21,7 +21,7 @@ dev: ## run the Google Cloud Function NodeJS Framework locally with the paramete
 call-local-get-claps: ## call the function locally
 	@curl -X GET http://localhost:8080/ -H "Referer: http://localhost:1313/posts/openldap-helm-chart/" -H "Origin: http://localhost:1313"
 	#curl -X GET http://localhost:8080/ -H "Referer: http://localhosdt:1313/posts/openldap-helm-chart/"
-	#curl -X GET http://localhost:8080/ -H "Referer: https://www.baptistout.net/posts/o?penldap-helm-chart/"
+	#curl -X GET http://localhost:8080/ -H "Referer: https://baptistout.net/posts/o?penldap-helm-chart/"
 
 local-firestore: ## run a local firestore
 	firebase emulators:start --only firestore --import firestore-dump-personal-218506/2020-04-21T08:42:16_78280
@@ -54,7 +54,7 @@ deploy: ## deploy the function to GCP
 		--set-env-vars SUPER_USER_MAIL_ADDRESS=${SUPER_USER_MAIL_ADDRESS}
 
 call-get-claps: ## call the function deployed on GCP
-	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://www.baptistout.net/posts/openldap-helm-chart/" -H "Origin: https://www.baptistout.net"
+	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://baptistout.net/posts/openldap-helm-chart/" -H "Origin: https://baptistout.net"
 
 
 
