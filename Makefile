@@ -54,7 +54,8 @@ deploy: ## deploy the function to GCP
 		--set-env-vars SUPER_USER_MAIL_ADDRESS=${SUPER_USER_MAIL_ADDRESS}
 
 call-get-claps: ## call the function deployed on GCP
-	@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://baptistout.net/posts/openldap-helm-chart/" -H "Origin: https://baptistout.net"
+	#@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://baptistout.net/posts/openldap-helm-chart/" -H "Origin: https://baptistout.net"
+	curl -X GET https://baptistout.net/${FUNCTION} -H "Referer: https://baptistout.net/posts/openldap-helm-chart/" -H "Origin: https://baptistout.net"
 
 
 

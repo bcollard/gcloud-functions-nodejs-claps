@@ -114,7 +114,7 @@ app.use((req, res, next) => {
 
 
 // manual request limiting - GET
-app.get('/', (req, res, next) => {
+app.get('/claps', (req, res, next) => {
     let IP = req.ip;
     if (FIRESTORE_ENV == undefined) {
         IP = req.headers['x-forwarded-for']
@@ -135,7 +135,7 @@ app.get('/', (req, res, next) => {
     next();
 });
 // manual request limiting - POST
-app.post('/', (req, res, next) => {
+app.post('/claps', (req, res, next) => {
     let IP = req.ip;
     if (FIRESTORE_ENV == undefined) {
         IP = req.headers['x-forwarded-for']
@@ -158,7 +158,7 @@ app.post('/', (req, res, next) => {
 
 
 // GET
-app.get('/', (req, res) => {
+app.get('/claps', (req, res) => {
     let referer = req.get("Referer");
     let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer).limit(1);
 
@@ -189,7 +189,7 @@ app.get('/', (req, res) => {
 
 
 // POST
-app.post('/', (req, res) => {
+app.post('/claps', (req, res) => {
     let referer = req.get("Referer");
     let query = firestore.collection(COLLECTION_NAME).where('url', '==', referer).limit(1);
 
@@ -250,7 +250,7 @@ function validReferrer(url) {
 
 // OAUTH
 // init code grant flow
-app.get('/secure/auth', (req, res) => {
+app.get('/claps/secure/auth', (req, res) => {
     const scopes = [
         'openid', 'email'
     ];
@@ -262,7 +262,7 @@ app.get('/secure/auth', (req, res) => {
     res.redirect(authUrl);
 });
 // code grant callback
-app.get('/secure/oauthcallback', (req, res) => {
+app.get('/claps/secure/oauthcallback', (req, res) => {
     const code = req.query.code;
 
     return new Promise((resolve, reject) => {
