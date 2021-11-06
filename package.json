@@ -28,7 +28,7 @@
     "is-absolute-url": "^3.0.3",
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^1.8.0",
-    "redis": "^3.0.2",
+    "redis": "^3.1.1",
     "redis-rate-limiter": "^1.2.0"
   },
   "devDependencies": {}
