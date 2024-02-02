@@ -12,6 +12,9 @@ export SUPER_USER_MAIL_ADDRESS=baptiste.collard@gmail.com
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+gcloud: ## use my personal GCP account
+	gcloud config configurations activate perso
+
 
 # LOCAL
 dev: ## run the Google Cloud Function NodeJS Framework locally with the parameterized function
@@ -42,7 +45,7 @@ deploy: ## deploy the function to GCP
 	@gcloud functions deploy ${FUNCTION} \
 		--entry-point ${FUNCTION} \
 		--region ${GCP_REGION} \
-		--runtime nodejs10 \
+		--runtime nodejs20 \
 		--trigger-http \
 		--timeout 10 \
 		--memory 256MB \
