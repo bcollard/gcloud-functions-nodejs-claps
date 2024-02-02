@@ -30,7 +30,7 @@ const firestore = new Firestore({
 
 var REDIS_HOST = "localhost"
 var OAUTH_REDIRECT_URI = "http://localhost:8080/secure/oauthcallback"
-let REFERRER_WHITELIST = [/^https:\/\/baptistout.net\/posts\/[\w\d-]+\/?#?[\w\d-_\?&=]*$/g, /^https:\/\/accounts.google.com\/$/g];
+let REFERRER_WHITELIST = [/^https:\/\/baptistout.net\/posts\/[\w\d-]+\/?#?[\w\d-_\?&=]*$/g, /^https:\/\/baptistout.net\/other\/[\w\d-]+\/?#?[\w\d-_\?&=]*$/g, /^https:\/\/accounts.google.com\/$/g];
 var CORS_WHITELIST = ['https://baptistout.net']
 
 // ENV SETTINGS
