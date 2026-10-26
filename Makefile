@@ -45,6 +45,7 @@ deploy: ## deploy the function to GCP
 	@gcloud functions deploy ${FUNCTION} \
 		--entry-point ${FUNCTION} \
 		--region ${GCP_REGION} \
+		--gen2 \
 		--runtime nodejs22 \
 		--trigger-http \
 		--timeout 10 \
