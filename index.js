@@ -1,6 +1,5 @@
 'use strict';
 
-const functions = require('firebase-functions');
 const { Firestore } = require('@google-cloud/firestore');
 const express = require('express');
 const cors = require('cors');
@@ -299,4 +298,5 @@ app.get('/claps/secure/oauthcallback', (req, res) => {
 });
 
 
-exports.claps = functions.https.onRequest(app);
+// An Express app is a valid HTTP handler for the Functions Framework.
+exports.claps = app;
