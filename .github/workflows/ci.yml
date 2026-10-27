@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Smoke test
+        run: yarn test
+
+      # Boot the function the way Cloud Run does (Functions Framework) and
+      # check the routes that don't need Firestore.
+      - name: Functions Framework boot
+        run: |
+          run_dir=$(mktemp -d)
+          echo '{"web":{"client_id":"ci","client_secret":"ci"}}' > "$run_dir/oauth_client_secret.json"
+          (cd "$run_dir" && FIRESTORE_ENV=local FIRESTORE_EMULATOR_HOST=localhost:65535 PROJECT_ID=ci \
+            "$GITHUB_WORKSPACE/node_modules/.bin/functions-framework" --source="$GITHUB_WORKSPACE" --target=claps --port=8080 &)
+          for i in $(seq 1 30); do curl -s -o /dev/null http://localhost:8080/claps/secure/auth && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/claps/secure/auth)" = 302
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X DELETE http://localhost:8080/claps)" = 405
