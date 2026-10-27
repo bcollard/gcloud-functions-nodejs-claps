@@ -45,7 +45,8 @@ if (FIRESTORE_ENV === "local") {
 }
 
 // OAuth2 config
-const clientSecretJson = JSON.parse(fs.readFileSync('./oauth_client_secret.json'));
+// Mounted from Secret Manager on Cloud Run (OAUTH_CLIENT_SECRET_FILE); a local file in development.
+const clientSecretJson = JSON.parse(fs.readFileSync(process.env.OAUTH_CLIENT_SECRET_FILE || './oauth_client_secret.json'));
 const oauth2Client = new OAuth2Client(
     clientSecretJson.web.client_id,
     clientSecretJson.web.client_secret,
