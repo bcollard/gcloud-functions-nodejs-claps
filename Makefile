@@ -41,21 +41,15 @@ rm-local-redis: ## rm the local redis (docker)
 
 
 # REMOTE
-deploy: ## deploy the function to GCP
-	@gcloud functions deploy ${FUNCTION} \
-		--entry-point ${FUNCTION} \
+deploy: ## deploy to Cloud Run (migrated from Cloud Functions gen1; env vars and settings stay on the service)
+	@gcloud run deploy ${FUNCTION} \
+		--source . \
+		--function ${FUNCTION} \
+		--base-image nodejs22 \
 		--region ${GCP_REGION} \
-		--gen2 \
-		--runtime nodejs22 \
-		--trigger-http \
-		--timeout 10 \
-		--memory 256MB \
-		--allow-unauthenticated \
-		--set-env-vars PROJECT_ID=${PROJECT_ID} \
-		--set-env-vars REDIS_HOST=10.29.74.131 \
-		--vpc-connector projects/${PROJECT_ID}/locations/europe-west1/connectors/bco-serverless-connector \
-		--set-env-vars OAUTH_REDIRECT_URI=https://baptistout.net/${FUNCTION}/secure/oauthcallback \
-		--set-env-vars SUPER_USER_MAIL_ADDRESS=${SUPER_USER_MAIL_ADDRESS}
+		--project ${PROJECT_ID} \
+		--remove-env-vars REDIS_HOST \
+		--quiet
 
 call-get-claps: ## call the function deployed on GCP
 	#@curl -X GET https://${GCP_REGION}-${PROJECT_ID}.cloudfunctions.net/${FUNCTION} -H "Referer: https://baptistout.net/posts/openldap-helm-chart/" -H "Origin: https://baptistout.net"
