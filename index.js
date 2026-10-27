@@ -5,10 +5,8 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const isAbsUrl = require('is-absolute-url');
-const rateLimiter = require('redis-rate-limiter');
-const redis = require('redis');
 const fs = require('fs');
-const { google } = require('googleapis');
+const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 
@@ -48,7 +46,7 @@ if (FIRESTORE_ENV === "local") {
 
 // OAuth2 config
 const clientSecretJson = JSON.parse(fs.readFileSync('./oauth_client_secret.json'));
-const oauth2Client = new google.auth.OAuth2(
+const oauth2Client = new OAuth2Client(
     clientSecretJson.web.client_id,
     clientSecretJson.web.client_secret,
     OAUTH_REDIRECT_URI
@@ -60,8 +58,10 @@ const client = jwksClient({
 
 function getKey(header, callback) {
     client.getSigningKey(header.kid, function (err, key) {
-        var signingKey = key.publicKey || key.rsaPublicKey;
-        callback(null, signingKey);
+        if (err) {
+            return callback(err);
+        }
+        callback(null, key.getPublicKey());
     });
 }
 
