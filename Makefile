@@ -48,6 +48,8 @@ deploy: ## deploy to Cloud Run (migrated from Cloud Functions gen1; env vars and
 		--base-image nodejs22 \
 		--region ${GCP_REGION} \
 		--project ${PROJECT_ID} \
+		--set-secrets /secrets/oauth/oauth_client_secret.json=claps-oauth-client:latest \
+		--update-env-vars OAUTH_CLIENT_SECRET_FILE=/secrets/oauth/oauth_client_secret.json \
 		--remove-env-vars REDIS_HOST \
 		--quiet
 

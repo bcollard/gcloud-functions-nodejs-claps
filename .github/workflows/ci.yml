@@ -37,3 +37,50 @@ jobs:
           for i in $(seq 1 30); do curl -s -o /dev/null http://localhost:8080/claps/secure/auth && break; sleep 1; done
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/claps/secure/auth)" = 302
           test "$(curl -s -o /dev/null -w '%{http_code}' -X DELETE http://localhost:8080/claps)" = 405
+
+  # Deploys master to Cloud Run after the tests pass, as claps-deployer
+  # (Workload Identity Federation, no keys). The OAuth client comes from
+  # Secret Manager (claps-oauth-client), mounted as a file.
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.GCP_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed # v2.1.13
+        with:
+          workload_identity_provider: projects/681025799424/locations/global/workloadIdentityPools/gentinel-github/providers/claps
+          service_account: claps-deployer@personal-218506.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@e427ad8a34f8676edf47cf7d7925499adf3eb74f # v2.2.1
+
+      - name: Deploy
+        run: |
+          gcloud run deploy claps \
+            --source . \
+            --function claps \
+            --base-image nodejs22 \
+            --region europe-west1 \
+            --project personal-218506 \
+            --set-secrets /secrets/oauth/oauth_client_secret.json=claps-oauth-client:latest \
+            --update-env-vars OAUTH_CLIENT_SECRET_FILE=/secrets/oauth/oauth_client_secret.json \
+            --remove-env-vars REDIS_HOST \
+            --quiet
+
+      - name: Smoke test through the blog
+        run: |
+          for i in $(seq 1 10); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://baptistout.net/claps/secure/auth)
+            [ "$code" = 302 ] && exit 0
+            sleep 6
+          done
+          echo "::error::https://baptistout.net/claps/secure/auth returned $code"
+          exit 1
